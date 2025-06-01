@@ -290,9 +290,9 @@ docker compose run --rm vision-parse python run_vision_parse.py --input path/to/
 ```
 
 *   Replace `path/to/your/document.pdf` with the actual path to your input PDF file.
-*   Replace `path/to/your/output.md` with the desired path for the generated markdown file.
+*   Replace `path/to/your/output.md` with the desired path for the generated markdown file. The script will automatically create any parent directories in this path if they do not already exist.
 
-**Important:** These paths should be relative to the root of the project directory. For example, if you place `my_doc.pdf` in the project root, the input path would be `my_doc.pdf`. Similarly, `output/my_doc.md` would save the output to an `output` folder in your project root (you might need to create the `output` folder first if it doesn't exist).
+**Important:** These paths should be relative to the root of the project directory. For example, if you place `my_doc.pdf` in the project root, the input path would be `my_doc.pdf`. If you specify `--output output/my_doc.md`, the `output` folder will be created in your project root if it's not already there, and `my_doc.md` will be saved inside it.
 
 **CLI Options:**
 The `run_vision_parse.py` script supports several command-line arguments. To see all available options, run:
@@ -303,7 +303,14 @@ This will show all available options, such as:
 *   `--model`: Specify the vision model to use (e.g., `gpt-4o-mini`, `gpt-4-turbo`). This overrides `VISION_PARSE_MODEL_NAME` from the `.env` file if both are set.
 *   `--detailed_extraction` or `--no-detailed_extraction`: Enable or disable detailed extraction mode.
 *   `--enable_concurrency` or `--no-enable_concurrency`: Enable or disable concurrent processing of PDF pages.
+*   `--image_mode`: Controls how images from the PDF are handled:
+    *   `none` (default): Images are ignored.
+    *   `base64`: Images are embedded in the markdown as base64 strings (self-contained but larger files).
+    *   `url`: Images are saved as files (e.g., `image_1_1.png`) into a subfolder (see `--image_folder_name`), and markdown links to them.
+*   `--image_folder_name` (default: `images`): When `--image_mode='url'`, this specifies the name of the subfolder (relative to the markdown file's directory) where images will be saved. For instance, if your output is `reports/mydoc.md` and `--image_folder_name` is `assets`, images will be in `reports/assets/`.
 And more.
+
+**Note on Scanned Documents:** This tool, through `vision-parse`, is designed to work effectively with PDFs that are scans or contain only page images. The core process involves rendering each PDF page into an image, which is then analyzed by the Vision LLM. This means it does not require pre-existing selectable text in the PDF.
 
 ### Output
 
