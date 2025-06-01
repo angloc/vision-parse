@@ -251,3 +251,60 @@ Contributions to Vision Parse are welcome! Whether you're fixing bugs, adding ne
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Using with Docker (CLI)
+
+This method uses Docker Compose to run the `run_vision_parse.py` command-line script for PDF to Markdown conversion. This setup is designed for using `vision-parse` with API-based models (like OpenAI). API credentials and model preferences are managed via a `.env` file.
+
+### Prerequisites
+
+*   Docker and Docker Compose installed on your system.
+*   An OpenAI API key.
+*   The base URL for your cloudrouter OpenAI endpoint (if you are using a custom OpenAI-compatible API endpoint).
+
+### Setup
+
+1.  **Create `.env` file**:
+    Copy the example environment file and then edit it with your credentials:
+    ```bash
+    cp .env.example .env
+    ```
+    Now, open the `.env` file and add your actual `OPENAI_API_KEY` and `OPENAI_BASE_URL`.
+    The `VISION_PARSE_MODEL_NAME` in the `.env` file is an optional way to specify your preferred OpenAI model (e.g., `gpt-4o`, `gpt-4-turbo`). If not set here or via the `--model` CLI argument, it defaults to the model specified in `run_vision_parse.py` (e.g., `gpt-4o`).
+
+### Building the Docker Image
+
+Build the Docker image using Docker Compose. This will use the `Dockerfile` at the root of the project.
+```bash
+docker compose build
+```
+
+### Running the CLI
+
+Once the image is built, you can run the `run_vision_parse.py` script within the Docker container. The project directory is mounted into the container at `/app`.
+
+**Example command:**
+
+```bash
+docker compose run --rm vision-parse python run_vision_parse.py --input path/to/your/document.pdf --output path/to/your/output.md
+```
+
+*   Replace `path/to/your/document.pdf` with the actual path to your input PDF file.
+*   Replace `path/to/your/output.md` with the desired path for the generated markdown file.
+
+**Important:** These paths should be relative to the root of the project directory. For example, if you place `my_doc.pdf` in the project root, the input path would be `my_doc.pdf`. Similarly, `output/my_doc.md` would save the output to an `output` folder in your project root (you might need to create the `output` folder first if it doesn't exist).
+
+**CLI Options:**
+The `run_vision_parse.py` script supports several command-line arguments. To see all available options, run:
+```bash
+docker compose run --rm vision-parse python run_vision_parse.py --help
+```
+This will show all available options, such as:
+*   `--model`: Specify the vision model to use (e.g., `gpt-4o-mini`, `gpt-4-turbo`). This overrides `VISION_PARSE_MODEL_NAME` from the `.env` file if both are set.
+*   `--detailed_extraction` or `--no-detailed_extraction`: Enable or disable detailed extraction mode.
+*   `--enable_concurrency` or `--no-enable_concurrency`: Enable or disable concurrent processing of PDF pages.
+And more.
+
+### Output
+
+The generated markdown file will be saved to the path you specified with the `--output` argument, directly in your project directory, accessible from your host machine.

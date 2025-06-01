@@ -1,0 +1,23 @@
+.git
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.vscode
+.idea
+*.swp
+*.swo
+*.swn
+.env
+.env.example
+docker-compose.yml
+Dockerfile
+README.md
+# Add other files/directories that should not be part of the Docker image

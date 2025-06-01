@@ -5,25 +5,22 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        - MODEL_NAME=${MODEL_NAME:?MODEL_NAME is required}
     environment:
-      - MODEL_NAME=${MODEL_NAME:?MODEL_NAME is required}
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}  # Optional: For OpenAI models
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-}
+      - VISION_PARSE_MODEL_NAME=${VISION_PARSE_MODEL_NAME:-gpt-4o} # Default to gpt-4o if not set
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}  # Optional: For Gemini models
     volumes:
       - .:/app
     working_dir: /app
     tty: true
     stdin_open: true
-    ports:
-      - "11434:11434"  # Expose Ollama port
     deploy:
       resources:
         limits:
-          memory: 16G  # Set memory limit to 16GB
+          memory: 2G  # Set memory limit to 2GB
         reservations:
-          memory: 8G   # Guarantee at least 8GB
+          memory: 1G   # Guarantee at least 1GB
           # Uncomment below lines if you have NVIDIA GPU available
           # devices:
           #   - driver: nvidia
